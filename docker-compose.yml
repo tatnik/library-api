@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     image: postgres:13-alpine
@@ -13,7 +12,9 @@ services:
 
   api:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --reload
+    working_dir: /code
+    # выполняем миграции  и запускаем сервер
+    command: bash -c "alembic -c alembic.ini upgrade head && uvicorn app.main:app --host 0.0.0.0 --reload"
     volumes:
       - .:/code
     ports:
