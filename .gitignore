@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environments
+.env
+venv/
+.env.*
+
+# Docker
+docker-compose.override.yml
+
+# VS Code
+.vscode/
+
+# Alembic
+alembic/versions/
+
+# Database
+*.db
+
+# Logs
+*.log
+
+# Pytest cache
+.pytest_cache/
+
+# Misc
+*.bak
