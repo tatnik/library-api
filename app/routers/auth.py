@@ -37,7 +37,8 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(token: str = Depends(utils.oauth2_scheme)):
-    """Logout endpoint. Клиент может удалить токен на своей стороне."""
+    """Logout endpoint. Отзывает токен и добавляет его в черный список."""
+    utils.revoke_token(token)
     return
 
 @router.get("/me", response_model=schemas.UserRead)
