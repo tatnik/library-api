@@ -114,3 +114,32 @@ def test_read_update_delete_book(auth_header):
     # GET после удаления -> 404
     resp = client.get(f"/books/{book_id}", headers=auth_header)
     assert resp.status_code == 404
+
+def test_public_read_books():
+    # GET /books/ должен быть доступен без авторизации
+    response = client.get("/books/")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_public_read_book(auth_header):
+    """
+    GET /books/{book_id} должен быть доступен без токена и возвращать корректный объект.
+    """
+    # Сначала создаём книгу под авторизацией
+    book_data = {
+        "title": "Public Book",
+        "author": "Author Pub",
+        "published_year": 2022,
+        "isbn": "000-1112223334",
+        "copies": 2,
+        "description": "Book for public test"
+    }
+    create_resp = client.post("/books/", json=book_data, headers=auth_header)
+    assert create_resp.status_code == 201
+    book_id = create_resp.json()["id"]
+
+    # Пробуем получить её без заголовка
+    response = client.get(f"/books/{book_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == book_id
