@@ -6,7 +6,7 @@ from app.database import SessionLocal
 from app import models, schemas, utils
 from app.core.config import settings
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+router = APIRouter(tags=["Auth"])
 
 # Dependency для получения сессии БД
 def get_db():
