@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from app.database import engine, Base
 from app.core.config import settings
-from app.routers.auth import router as auth_router # импортируем роутеры
-
+from app.routers.auth import router as auth_router 
+from app.routers.books import router as books_router
 
 app = FastAPI(
     title="Library API",
@@ -12,3 +12,4 @@ app = FastAPI(
 
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+app.include_router(books_router, prefix="/books", tags=["Books"])
