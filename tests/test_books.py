@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.main import app
-from app.db import get_db
-from app.database import Base
+from app.db import Base, get_db
+
 
 client = TestClient(app)
 
@@ -114,4 +114,3 @@ def test_read_update_delete_book(auth_header):
     # GET после удаления -> 404
     resp = client.get(f"/books/{book_id}", headers=auth_header)
     assert resp.status_code == 404
-    

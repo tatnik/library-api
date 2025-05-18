@@ -19,7 +19,7 @@ if config.config_file_name is not None:
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # import models' metadata
-from app.database import Base
+from app.db import Base
 import app.models  # noqa: F401
 
 target_metadata = Base.metadata

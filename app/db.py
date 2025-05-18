@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session, declarative_base
 from app.core.config import settings
 
 # Инициализация подключения и сессии к базе данных
@@ -20,3 +20,5 @@ def get_db() -> Session:
         yield db
     finally:
         db.close()
+
+Base = declarative_base()
