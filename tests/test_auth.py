@@ -20,7 +20,7 @@ TestingSessionLocal = sessionmaker(
 )
 
 # Переопределяем зависимость get_db для тестов
-import app.auth_utils as auth_utils
+import app.security as security
 
 @pytest.fixture(autouse=True)
 def override_get_db():
