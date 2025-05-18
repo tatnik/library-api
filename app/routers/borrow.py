@@ -14,8 +14,11 @@ router = APIRouter(
     dependencies=[Depends(security.get_current_user)]
 )
 
-# Вспомогательная функция для получения активных займов читателя
-def count_active_loans(reader_id: int, db: Session) -> int:
+# Вспомогательная функция для подсчета выданных читателю книг
+def count_active_loans(
+    reader_id: int,
+    db: Session
+) -> int:
     return db.query(models.BorrowedBook).filter(
         models.BorrowedBook.reader_id == reader_id,
         models.BorrowedBook.return_date.is_(None)
@@ -26,9 +29,11 @@ def borrow_book(
     payload: schemas.BorrowCreate,
     db: Session = Depends(get_db)
 ) -> models.BorrowedBook:
+    # Проверяем наличие копий
     book = db.query(models.Book).filter(models.Book.id == payload.book_id).first()
     if not book or book.copies < 1:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No copies available")
+    # Проверяем лимит по читателю
     if count_active_loans(payload.reader_id, db) >= 3:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Loan limit exceeded")
     # Выдача
@@ -43,6 +48,7 @@ def return_book(
     payload: schemas.BorrowCreate,
     db: Session = Depends(get_db)
 ) -> models.BorrowedBook:
+    # Находим запись о выдаче
     loan = db.query(models.BorrowedBook).filter(
         models.BorrowedBook.book_id == payload.book_id,
         models.BorrowedBook.reader_id == payload.reader_id,
@@ -50,8 +56,23 @@ def return_book(
     ).first()
     if not loan:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No active loan found")
+    # Фиксируем возврат книги
     loan.return_date = datetime.utcnow()
     book = db.query(models.Book).filter(models.Book.id == payload.book_id).first()
     book.copies += 1
     db.commit(); db.refresh(loan)
     return loan
+
+@router.get("/borrowed/{reader_id}", response_model=List[schemas.BookRead])
+def read_borrowed_books(
+    reader_id: int,
+    db: Session = Depends(get_db)
+) -> List[models.Book]:
+    # Получаем список выданных книг
+    loans = db.query(models.BorrowedBook).filter(
+        models.BorrowedBook.reader_id == reader_id,
+        models.BorrowedBook.return_date.is_(None)
+    ).all()
+    # Извлекаем книги по ID
+    book_ids = [loan.book_id for loan in loans]
+    return db.query(models.Book).filter(models.Book.id.in_(book_ids)).all()
