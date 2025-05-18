@@ -8,7 +8,6 @@ import app.security as security
 from app.db import get_db
 
 router = APIRouter(
-
     tags=["Books"],
     dependencies=[Depends(security.get_current_user)]  # все операции защищены JWT
 )
@@ -52,9 +51,10 @@ def read_books(
 
 @router.get("/{book_id}", response_model=schemas.BookRead)
 def read_book(
-    book: models.Book = Depends(lambda book_id, db=Depends(get_db): get_book_or_404(book_id, db))
+    book_id: int,
+    db: Session = Depends(get_db)
 ) -> models.Book:
-    return book
+    return get_book_or_404(book_id, db)
 
 @router.put("/{book_id}", response_model=schemas.BookRead)
 def update_book(

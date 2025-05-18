@@ -80,3 +80,38 @@ def test_create_and_read_books(auth_header):
     assert isinstance(books, list)
     assert len(books) == 1
     assert books[0]["title"] == "Test Book"
+
+def test_read_update_delete_book(auth_header):
+    # Создание книги для тестов CRUD по ID
+    book_data = {
+        "title": "Another Book",
+        "author": "Author B",
+        "published_year": 2021,
+        "isbn": "987-6543210987",
+        "copies": 3,
+        "description": "Another test book"
+    }
+    resp = client.post("/books/", json=book_data, headers=auth_header)
+    assert resp.status_code == 201
+    book = resp.json()
+    book_id = book["id"]
+
+    # GET /books/{id}
+    resp = client.get(f"/books/{book_id}", headers=auth_header)
+    assert resp.status_code == 200
+    assert resp.json()["id"] == book_id
+
+    # PUT /books/{id}
+    update_data = {"title": "Updated Title"}
+    resp = client.put(f"/books/{book_id}", json=update_data, headers=auth_header)
+    assert resp.status_code == 200
+    assert resp.json()["title"] == "Updated Title"
+
+    # DELETE /books/{id}
+    resp = client.delete(f"/books/{book_id}", headers=auth_header)
+    assert resp.status_code == 204
+
+    # GET после удаления -> 404
+    resp = client.get(f"/books/{book_id}", headers=auth_header)
+    assert resp.status_code == 404
+    
