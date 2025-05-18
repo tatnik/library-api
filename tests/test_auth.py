@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 from app.database import Base
 from app.main import app
-import app.auth_utils as auth_utils
+import app.db as db_module
 
 client = TestClient(app)
 
@@ -37,7 +37,7 @@ def override_get_db():
             db.close()
     
     # Используем dependency_overrides для подмены get_db
-    app.dependency_overrides[auth_utils.get_db] = _get_test_db
+    app.dependency_overrides[db_module.get_db] = _get_test_db
     yield
     # После тестов очищаем overrides
     app.dependency_overrides.clear()

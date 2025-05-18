@@ -6,13 +6,13 @@ from sqlalchemy.orm import Session
 import app.schemas as schemas
 import app.models as models
 import app.auth_utils as auth_utils
+from app.db import get_db
 from app.core.config import settings
 
 # --- Константы и зависимости
 router = APIRouter(tags=["Auth"])
 
 oauth2_scheme = auth_utils.oauth2_scheme
-get_db = auth_utils.get_db
 credentials_exception = auth_utils.credentials_exception
  
 # --- Маршруты авторизации      

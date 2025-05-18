@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.database import SessionLocal
 from app.models import User
-
+from app.db import get_db
 
 # --- Константы и зависимости
 # Контекст шифрования для bcrypt
@@ -27,14 +27,6 @@ credentials_exception = HTTPException(
 
 # Хранилище отозванных токенов (in-memory blacklist)
 revoked_tokens: Set[str] = set()
-
-# Сессия БД
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Хеширование пароля
 def get_password_hash(
