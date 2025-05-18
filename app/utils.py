@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional,Set
 from passlib.context import CryptContext
 from jose import jwt
 from fastapi import Depends, HTTPException, status
@@ -10,9 +10,9 @@ from app.core.config import settings
 from app.database import SessionLocal
 from app.models import User
 
-from typing import Set
 
-# Создаём контекст шифрования для bcrypt
+# --- Константы и зависимости
+# Контекст шифрования для bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # OAuth2 scheme для получения токена из запроса
@@ -37,15 +37,23 @@ def get_db():
         db.close()
 
 # Хеширование пароля
-def get_password_hash(password: str) -> str:
+def get_password_hash(
+    password: str
+) -> str:
     return pwd_context.hash(password)
 
 # Проверка пароля
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+def verify_password(
+    plain_password: str,
+    hashed_password: str
+)-> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 # Создание JWT-токена
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(
+    data: dict,
+    expires_delta: Optional[timedelta] = None
+) -> str:
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
@@ -76,7 +84,9 @@ def get_current_user(
         raise credentials_exception
     return user
 
-def revoke_token(token: str) -> None:
+def revoke_token(
+    token: str
+) -> None:
     """
     Помечает токен отозванным, добавляя в blacklist.
     """
