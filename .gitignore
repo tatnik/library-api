@@ -20,6 +20,7 @@ alembic/versions/
 
 # Database
 *.db
+.data/**
 
 # Logs
 *.log
