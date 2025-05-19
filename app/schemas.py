@@ -45,6 +45,7 @@ class BookRead(BookBase):
 class ReaderBase(BaseModel):
     name: str
     email: EmailStr
+    phone: str
 
 class ReaderCreate(ReaderBase):
     pass
@@ -52,6 +53,7 @@ class ReaderCreate(ReaderBase):
 class ReaderUpdate(BaseModel):
     name: Optional[str]
     email: Optional[EmailStr]
+    phone: Optional[str]
 
 class ReaderRead(ReaderBase):
     id: int

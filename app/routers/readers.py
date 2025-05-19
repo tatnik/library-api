@@ -35,7 +35,7 @@ def create_reader(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    reader = models.Reader(name=reader_in.name, email=reader_in.email)
+    reader = models.Reader(name=reader_in.name, email=reader_in.email, phone=reader_in.phone)
     db.add(reader)
     db.commit()
     db.refresh(reader)

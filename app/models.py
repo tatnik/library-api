@@ -29,7 +29,7 @@ class Reader(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False, index=True)
-
+    phone = Column(String, nullable=False)  # Новое обязательное поле телефона
     borrows = relationship('BorrowedBook', back_populates='reader')
 
 
