@@ -10,7 +10,7 @@ import app.models as models
 client = TestClient(app)
 
 # Тестовая БД для borrow
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_borrow.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./data/tests/test_borrow.db"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )

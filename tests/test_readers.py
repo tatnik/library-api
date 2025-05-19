@@ -10,7 +10,7 @@ from app.db import get_db, Base
 client = TestClient(app)
 
 # Тестовая БД SQLite
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_readers.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./data/tests/test_readers.db"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
