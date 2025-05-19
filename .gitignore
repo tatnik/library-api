@@ -15,12 +15,9 @@ docker-compose.override.yml
 # VS Code
 .vscode/
 
-# Alembic
-alembic/versions/
-
 # Database
 *.db
-.data/**
+data/**
 
 # Logs
 *.log
