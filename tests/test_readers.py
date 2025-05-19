@@ -46,12 +46,13 @@ def auth_header():
 
 
 def test_create_and_list_readers(auth_header):
-    data = {"name": "John Doe", "email": "john@example.com"}
+    data = {"name": "John Doe", "email": "john@example.com", "phone": "9513219876"}
     resp = client.post("/readers/", json=data, headers=auth_header)
     assert resp.status_code == 201
     reader = resp.json()
     assert reader["name"] == data["name"]
     assert reader["email"] == data["email"]
+    assert reader["phone"] == data["phone"]
 
     resp = client.get("/readers/", headers=auth_header)
     assert resp.status_code == 200
@@ -62,7 +63,7 @@ def test_create_and_list_readers(auth_header):
 
 def test_crud_reader_by_id(auth_header):
     # Создать
-    data = {"name": "Jane Doe", "email": "jane@example.com"}
+    data = {"name": "Jane Doe", "email": "jane@example.com", "phone": "9513219876"}
     resp = client.post("/readers/", json=data, headers=auth_header)
     reader = resp.json()
     rid = reader["id"]

@@ -67,7 +67,7 @@ def setup_entities(auth_header):
         "/books/", json={"title": "B", "author": "A", "copies": 1}, headers=auth_header
     )
     reader_resp = client.post(
-        "/readers/", json={"name": "R", "email": "r@example.com"}, headers=auth_header
+        "/readers/", json={"name": "R", "email": "r@example.com", "phone": "9513219876"}, headers=auth_header
     )
     assert book_resp.status_code == 201
     assert reader_resp.status_code == 201
