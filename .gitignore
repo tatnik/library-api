@@ -8,7 +8,6 @@ __pycache__/
 .env
 venv/
 
-
 # Docker
 docker-compose.override.yml
 
@@ -27,3 +26,4 @@ data/**
 
 # Misc
 *.bak
+.coverage
