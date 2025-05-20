@@ -6,7 +6,7 @@ until pg_isready -h db -U "$POSTGRES_USER"; do
   sleep 1
 done
 
-echo "🚀 Применяем миграции..."
+echo "🚀 Применяем  миграции..."
 alembic upgrade head
 
 echo "🎉 Запускаем API..."
