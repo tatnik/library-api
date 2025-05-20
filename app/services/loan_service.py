@@ -25,7 +25,7 @@ class LoanService:
     @staticmethod
     def create_loan(db: Session, loan_in: LoanCreate) -> Loan:
         """Create a loan if copies are available and reader under the limit."""
-        book = db.query(Book).get(loan_in.book_id)
+        book = db.get(Book, loan_in.book_id)
         if not book or book.copies < 1:
             raise HTTPException(
                 status.HTTP_400_BAD_REQUEST,
@@ -57,7 +57,7 @@ class LoanService:
                 detail="No active loan found"
             )
         loan.return_date = datetime.utcnow()
-        book = db.query(Book).get(loan_in.book_id)
+        book = db.get(Book, loan_in.book_id)
         book.copies += 1
         db.commit()
         db.refresh(loan)

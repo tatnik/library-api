@@ -12,7 +12,7 @@ class ReaderService:
     """
     @staticmethod
     def get_reader_or_404(db: Session, reader_id: int) -> Reader:
-        reader = db.query(Reader).get(reader_id)
+        reader = db.get(Reader, reader_id)
         if not reader:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,

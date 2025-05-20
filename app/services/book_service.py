@@ -15,7 +15,7 @@ class BookService:
 
     @staticmethod
     def get_book_or_404(db: Session, book_id: int) -> BookRead:
-        book = db.query(Book).get(book_id)
+        book = db.get(Book, book_id)
         if not book:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
