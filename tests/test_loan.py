@@ -4,7 +4,7 @@ import uuid
 
 @pytest.fixture
 def setup_entities(client, make_auth_header):
-    """Создаёт книгу и читателя с уникальными данными для теста."""
+    """Creates a book and a reader with unique data for testing."""
     auth_header = make_auth_header()
     unique_email = f"reader_{uuid.uuid4().hex}@example.com"
     book_resp = client.post(
@@ -27,11 +27,11 @@ def setup_entities(client, make_auth_header):
     (3, [status.HTTP_201_CREATED] * 3 + [status.HTTP_400_BAD_REQUEST]),
 ])
 def test_loan_and_limits(client, setup_entities, extra_books, expected_statuses):
-    """Тест лимита на количество выдач книг."""
+    """Test the loan limit for the number of books."""
     initial_book_id, reader_id, auth_header = setup_entities
     book_ids = [initial_book_id]
 
-    # Создаём дополнительные книги
+    # Create additional books
     for i in range(extra_books):
         resp = client.post(
             "/books/",
@@ -41,7 +41,7 @@ def test_loan_and_limits(client, setup_entities, extra_books, expected_statuses)
         assert resp.status_code == status.HTTP_201_CREATED
         book_ids.append(resp.json()["id"])
 
-    # Выдаём книги
+    # Loan books
     actual_statuses = []
     for bid in book_ids:
         resp = client.post(
@@ -52,26 +52,26 @@ def test_loan_and_limits(client, setup_entities, extra_books, expected_statuses)
     assert actual_statuses == expected_statuses
 
 def test_return_book_and_copy_increment(client, setup_entities):
-    """Тест возврата книги и восстановления количества экземпляров."""
+    """Test returning a book and restoring the number of copies."""
     book_id, reader_id, auth_header = setup_entities
-    # Выдача книги
+    # Loan a book
     resp = client.post(
         "/loans/", json={"book_id": book_id, "reader_id": reader_id}, headers=auth_header
     )
     assert resp.status_code == status.HTTP_201_CREATED
 
-    # Возврат книги
+    # Return the book
     resp = client.post(
         "/loans/return", json={"book_id": book_id, "reader_id": reader_id}, headers=auth_header
     )
     assert resp.status_code == status.HTTP_200_OK
 
-    # Проверка восстановления копий
+    # Check that copies are restored
     book = client.get(f"/books/{book_id}")
     assert book.json()["copies"] == 1
 
 def test_return_not_loaned(client, setup_entities):
-    """Тест попытки вернуть невыданную книгу."""
+    """Test attempting to return a book that was not loaned."""
     book_id, reader_id, auth_header = setup_entities
     resp = client.post(
         "/loans/return", json={"book_id": book_id, "reader_id": reader_id}, headers=auth_header

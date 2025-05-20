@@ -4,7 +4,7 @@ import uuid
 
 @pytest.fixture
 def reader_payload():
-    """Всегда уникальный email для читателя."""
+    """Always unique email for the reader."""
     return {
         "name": "John Doe",
         "email": f"john_{uuid.uuid4().hex}@example.com",
@@ -45,3 +45,4 @@ def test_crud_readers(client, make_auth_header, reader_payload):
     # Not found
     resp = client.get(f"/readers/{rid}", headers=auth_header)
     assert resp.status_code == status.HTTP_404_NOT_FOUND
+    

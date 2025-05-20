@@ -9,7 +9,7 @@ DATABASE_URL = os.getenv('DATABASE_URL', settings.DATABASE_URL)
 
 @pytest.fixture(scope="session")
 def engine():
-    """Фикстура создаёт engine на всё тестовое окружение и проверяет подключение."""
+    """Fixture creates engine for the entire test session and checks connection."""
     try:
         engine = create_engine(DATABASE_URL)
         conn = engine.connect()
@@ -20,7 +20,7 @@ def engine():
         pytest.skip(f"Cannot connect to database: {e}")
 
 def test_tables_exist(engine):
-    """Проверяем наличие всех ключевых таблиц в БД после миграций."""
+    """Check that all main tables exist in DB after migrations."""
     inspector = inspect(engine)
     expected_tables = {
         'users',
@@ -32,18 +32,18 @@ def test_tables_exist(engine):
     existing = set(inspector.get_table_names())
     missing = expected_tables - existing
     assert not missing, (
-        f"Следующие таблицы отсутствуют: {missing}. "
-        "Возможно, не выполнены миграции Alembic."
+        f"Missing tables: {missing}. "
+        "Maybe Alembic migrations are not applied."
     )
 
 def test_reader_phone_column(engine):
-    """Проверяем, что в таблице readers есть NOT NULL-столбец phone типа String/VARCHAR."""
+    """Check that the 'readers' table has a NOT NULL 'phone' column of type String/VARCHAR."""
     inspector = inspect(engine)
     columns = {col['name']: col for col in inspector.get_columns('readers')}
-    assert 'phone' in columns, "Нет столбца 'phone' в таблице readers"
-    assert not columns['phone']['nullable'], "Столбец 'phone' должен быть NOT NULL"
+    assert 'phone' in columns, "No 'phone' column in 'readers' table"
+    assert not columns['phone']['nullable'], "'phone' column must be NOT NULL"
     col_type = columns['phone']['type']
-    # Проверка на строковый тип (универсально для разных диалектов)
+    # Universal check for string type (different dialects)
     assert (
         hasattr(col_type, 'length') or str(col_type).lower().startswith('varchar')
-    ), f"Неожиданный тип столбца phone: {col_type}"
+    ), f"Unexpected column type for 'phone': {col_type}"

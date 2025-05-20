@@ -24,7 +24,7 @@ def register(
     db: Session = Depends(get_db)
 ):
     """
-    Создаёт нового пользователя (библиотекаря) с хешированным паролем.
+    Register a new librarian (user) with a hashed password.м.
     """
     if AuthService.user_exists(db, user_in.email):
         raise HTTPException(
@@ -44,7 +44,7 @@ def login(
     db: Session = Depends(get_db)
 ):
     """
-    Проверяет email и пароль, возвращает JWT.
+    Authenticate by email and password, return JWT access token.
     """
     user = AuthService.authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -68,7 +68,7 @@ def logout(
     token: str = Depends(AuthService.oauth2_scheme)
 ):
     """
-    Отзывает текущий токен, добавляя его в черный список.
+    Revoke the current token by adding it to the blacklist.
     """
     AuthService.revoke_token(token)
 
@@ -81,6 +81,6 @@ def read_current_user(
     current_user: UserRead = Depends(AuthService.get_current_user)
 ):
     """
-    Возвращает информацию о текущем аутентифицированном пользователе.
+     Return information about the current authenticated user.
     """
     return current_user

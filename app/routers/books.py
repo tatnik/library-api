@@ -20,7 +20,9 @@ router = APIRouter(
 def read_books(
     db: Session = Depends(get_db)
 ) -> List[BookRead]:
-    """Получение списка всех книг"""
+    """
+    Get a list of all books.
+    """
     return BookService.list_books(db)
 
 @router.get(
@@ -32,7 +34,9 @@ def read_book(
     book_id: int,
     db: Session = Depends(get_db)
 ) -> BookRead:
-    """Получение одной книги по ID"""
+    """
+    Get a single book by its ID.
+    """
     return BookService.get_book_or_404(db, book_id)
 
 @router.post(
@@ -46,7 +50,9 @@ def create_book(
     book_in: BookCreate,
     db: Session = Depends(get_db)
 ) -> BookRead:
-    """Добавление новой книги в каталог"""
+    """
+    Add a new book to the catalog.
+    """
     return BookService.create_book(db, book_in)
 
 @router.put(
@@ -60,7 +66,9 @@ def update_book(
     book_in: BookUpdate,
     db: Session = Depends(get_db)
 ) -> BookRead:
-    """Изменение данных книги по ID"""
+    """
+    Update the data of a book by ID.
+    """
     return BookService.update_book(db, book_id, book_in)
 
 @router.delete(
@@ -73,5 +81,7 @@ def delete_book(
     book_id: int,
     db: Session = Depends(get_db)
 ) -> None:
-    """Удаление книги по ID"""
+    """
+    Delete a book by its ID.
+    """
     BookService.delete_book(db, book_id)

@@ -24,7 +24,9 @@ def create_loan(
     loan_in: LoanCreate,
     db: Session = Depends(get_db)
 ) -> LoanRead:
-    """Loan a book to a reader."""
+    """
+    Loan a book to a reader.
+    """
     return LoanService.create_loan(db, loan_in)
 
 @router.post(
@@ -36,7 +38,9 @@ def return_loan(
     loan_in: LoanCreate,
     db: Session = Depends(get_db)
 ) -> LoanRead:
-    """Return a loaned book."""
+    """
+    Return a loaned book.
+    """
     return LoanService.return_loan(db, loan_in)
 
 @router.get(
@@ -48,5 +52,7 @@ def get_active_loans(
     reader_id: int,
     db: Session = Depends(get_db)
 ) -> List[BookRead]:
-    """Get all currently loaned books for a reader."""
+    """
+    Get all currently loaned books for a reader.
+    """
     return LoanService.get_active_loans(db, reader_id)

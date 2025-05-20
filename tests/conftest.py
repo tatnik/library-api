@@ -8,7 +8,7 @@ import uuid
 from app.db import Base, get_db
 from app.main import app
 
-# Конфиг для тестовой БД (in-memory, изоляция через StaticPool)
+# Config for test DB (in-memory, isolation via StaticPool)
 TEST_DB_URL = "sqlite:///:memory:"
 engine = create_engine(
     TEST_DB_URL,
@@ -19,14 +19,14 @@ TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=Fals
 
 @pytest.fixture(autouse=True)
 def prepare_database():
-    """Полная изоляция: пересоздаём таблицы перед каждым тестом."""
+    """Full isolation: recreate tables before each test."""
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
 
 @pytest.fixture
 def client():
-    """TestClient с отдельной тестовой БД."""
+    """TestClient with a separate test database."""
     def _get_test_db():
         db = TestingSessionLocal()
         try:
@@ -40,17 +40,17 @@ def client():
 
 @pytest.fixture
 def make_auth_header(client):
-    """Фабрика для генерации JWT заголовка для нового пользователя."""
+    """Factory to generate JWT Authorization header for a new user."""
     def _make_auth_header(email=None, password="secret123"):
         if email is None:
             email = f"user_{uuid.uuid4().hex}@example.com"
-        # Регистрация
+        # Registration
         resp = client.post(
             "/auth/register",
             json={"email": email, "password": password}
         )
         assert resp.status_code == 201
-        # Логин
+        # Login
         resp = client.post(
             "/auth/login",
             data={"username": email, "password": password}

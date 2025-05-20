@@ -23,7 +23,9 @@ def create_reader(
     reader_in: ReaderCreate,
     db: Session = Depends(get_db)
 ) -> ReaderRead:
-    """Добавление нового читателя"""
+    """
+    Add a new reader.
+    """
     return ReaderService.create_reader(db, reader_in)
 
 @router.get(
@@ -34,7 +36,9 @@ def create_reader(
 def read_readers(
     db: Session = Depends(get_db)
 ) -> List[ReaderRead]:
-    """Получение списка всех читателей"""
+    """
+    Get a list of all readers.
+    """
     return ReaderService.list_readers(db)
 
 @router.get(
@@ -46,7 +50,9 @@ def read_reader(
     reader_id: int,
     db: Session = Depends(get_db)
 ) -> ReaderRead:
-    """Получение одного читателя по ID"""
+    """
+    Get a single reader by ID.
+    """
     return ReaderService.get_reader_or_404(db, reader_id)
 
 @router.put(
@@ -59,7 +65,9 @@ def update_reader(
     reader_in: ReaderUpdate,
     db: Session = Depends(get_db)
 ) -> ReaderRead:
-    """Изменение данных читателя по ID"""
+    """
+    Update the data of a reader by ID.
+    """
     return ReaderService.update_reader(db, reader_id, reader_in)
 
 @router.delete(
@@ -71,5 +79,7 @@ def delete_reader(
     reader_id: int,
     db: Session = Depends(get_db)
 ) -> None:
-    """Удаление читателя по ID"""
+    """
+    Delete a reader by ID.
+    """
     ReaderService.delete_reader(db, reader_id)
