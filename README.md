@@ -22,17 +22,12 @@
    ACCESS_TOKEN_EXPIRE_MINUTES=30
    ```
 
-3. **Создание папки для базы данных**
-   ```bash
-   mkdir -p data/postgres
-   ```
-
-4. **Запуск через Docker Compose**
+3. **Запуск через Docker Compose**
    ```bash
    docker-compose up -d --build
    ```
 
-5. **Первичная регистрация пользователя**
+4. **Первичная регистрация пользователя**
    - Откройте [http://localhost:8000/docs](http://localhost:8000/docs)
    - В разделе **Auth** выполните `POST /auth/register` с телом:
      ```json
