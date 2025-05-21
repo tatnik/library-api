@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.security.api_key import APIKeyHeader
 from sqlalchemy.exc import IntegrityError
 
 from app.routers.auth import router as auth_router 
@@ -8,6 +9,8 @@ from app.routers.readers import router as readers_router
 from app.routers.loan import router as loan_router
 
 
+
+api_key_scheme = APIKeyHeader(name="Authorization", auto_error=False)
 
 app = FastAPI(
     title="Library API",

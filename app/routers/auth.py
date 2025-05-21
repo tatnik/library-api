@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -7,6 +7,7 @@ from app.schemas.auth import UserCreate, UserRead, Token
 from app.services.auth_service import AuthService
 from app.db import get_db
 from app.core.config import settings
+from app.core.security import get_token
 
 router = APIRouter(
     prefix="/auth",
@@ -40,13 +41,13 @@ def register(
     summary="Authenticate and receive access token"
 )
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    login_data: UserCreate,
     db: Session = Depends(get_db)
 ):
     """
     Authenticate by email and password, return JWT access token.
     """
-    user = AuthService.authenticate_user(db, form_data.username, form_data.password)
+    user = AuthService.authenticate_user(db, login_data.email, login_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -64,13 +65,12 @@ def login(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Revoke current access token"
 )
-def logout(
-    token: str = Depends(AuthService.oauth2_scheme)
-):
+def logout(token: str = Depends(get_token)):
     """
     Revoke the current token by adding it to the blacklist.
     """
     AuthService.revoke_token(token)
+    return {"detail": "Logged out"}
 
 @router.get(
     "/me",

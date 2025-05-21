@@ -12,18 +12,14 @@ from app.core.config import settings
 from app.core.security import (
     get_password_hash, verify_password,
     create_access_token, get_current_user as security_get_current_user,
-    oauth2_scheme, revoke_token as security_revoke_token
+    get_token, revoke_token as security_revoke_token
 )
-
-
-oauth2_scheme = oauth2_scheme
 
 
 class AuthService:
     """
     Service for user registration, authentication and JWT handling.
     """
-    oauth2_scheme = oauth2_scheme
 
     @staticmethod
     def user_exists(db: Session, email: str) -> bool:
@@ -55,7 +51,7 @@ class AuthService:
 
     @classmethod
     def get_current_user(cls,
-                         token: str = Depends(oauth2_scheme),
+                         token: str = Depends(get_token),
                          db: Session = Depends(get_db)
                          ) -> User:
         """Delegate token decoding and user lookup to security module."""

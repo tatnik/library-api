@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 from typing import Optional, Set
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException,Security, status
+from fastapi.security.api_key import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -11,8 +11,9 @@ from app.db import get_db
 from app.models.user import User
 
 # --- Constants and dependencies ---
+api_key_scheme = APIKeyHeader(name="Authorization", auto_error=False)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Could not validate credentials",
@@ -20,6 +21,15 @@ credentials_exception = HTTPException(
 )
 revoked_tokens: Set[str] = set()
 
+def get_token(api_key: str = Security(api_key_scheme)):
+    if not api_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No auth token"
+        )
+    if api_key.startswith("Bearer "):
+        return api_key[len("Bearer "):]
+    return api_key
 
 def get_password_hash(password: str) -> str:
     """Return bcrypt hash of the given password."""
@@ -49,7 +59,7 @@ def decode_access_token(token: str) -> dict:
 
 
 def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
     db: Session = Depends(get_db)
 ) -> User:
     """Return current authenticated user or raise credentials exception."""
