@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get(
     "/",
     response_model=List[BookRead],
-    summary="List all books"
+    summary="Book list"
 )
 def read_books(
     db: Session = Depends(get_db)

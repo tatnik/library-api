@@ -33,7 +33,7 @@ def create_reader(
 @router.get(
     "/",
     response_model=List[ReaderRead],
-    summary="List all readers"
+    summary="Reader list"
 )
 def read_readers(
     db: Session = Depends(get_db)
