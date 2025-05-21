@@ -53,7 +53,7 @@ def make_auth_header(client):
         # Login
         resp = client.post(
             "/auth/login",
-            data={"username": email, "password": password}
+            json={"email": email, "password": password}
         )
         assert resp.status_code == 200
         token = resp.json()["access_token"]
