@@ -1,6 +1,6 @@
 # Library API
 
-**RESTful API для управления библиотечным каталогом**
+**RESTful API для управления библиотечным каталогом** (Тестовое задание)
 
 ---
 
@@ -33,7 +33,7 @@
      ```json
      {"email": "admin@example.com", "password": "strongpass"}
      ```
-   - Затем выполните `POST /auth/login` (form-data) и получите `access_token`.
+   - Затем выполните `POST /auth/login` с теми же данными и получите `access_token`.
 
 ---
 
@@ -112,7 +112,18 @@ library-api/
 ### 1. Регистрация пользователя (библиотекаря)
 
 ```bash
-curl -X POST http://localhost:8000/auth/register -H "Content-Type: application/json" -d '{"email": "admin@example.com", "password": "StrongPassword123"}'
+curl -X 'POST' \
+  'http://localhost:8000/auth/login' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "admin@example.com",
+  "password": "StrongPassword123"
+}'
+```
+в командной строке  Windows:
+```bash
+curl -X POST http://localhost:8000/auth/register -H "Content-Type: application/json" -d "{"""email""": """admin@example.com""", """password""": """StrongPassword123"""}"
 ```
 
 **Ответ (201 Created):**
@@ -122,13 +133,23 @@ curl -X POST http://localhost:8000/auth/register -H "Content-Type: application/j
   "email": "admin@example.com"
 }
 ```
-
 ---
 
 ### 2. Получение access token (логин)
 
 ```bash
-curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/x-www-form-urlencoded" -d "username=admin@example.com&password=StrongPassword123"
+curl -X 'POST' \
+  'http://localhost:8000/auth/login' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "admin@example.com",
+  "password": "striStrongPassword123"
+}'
+```
+в командной строке  Windows:
+```bash
+curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json" -d "{"""email""": """admin@example.com""", """password""": """StrongPassword123"""}"
 ```
 
 **Ответ (200 OK):**
@@ -138,97 +159,8 @@ curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/x-ww
   "token_type": "bearer"
 }
 ```
+Полное описание API после запуска проекта доступно по адресу `http://localhost:8000/docs`
 
----
-
-### 3. Создание книги (POST /books/) — требуется авторизация
-
-```bash
-curl -X POST http://localhost:8000/books/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <JWT_TOKEN>" \
-  -d '{"title": "Мастер и Маргарита", "author": "М. Булгаков", "published_year": 1967, "isbn": "123-4567890123", "copies": 5, "description": "Классика"}'
-```
-
-**Ответ (201 Created):**
-```json
-{
-  "id": 1,
-  "title": "Мастер и Маргарита",
-  "author": "М. Булгаков",
-  "published_year": 1967,
-  "isbn": "123-4567890123",
-  "copies": 5,
-  "description": "Классика"
-}
-```
-
----
-
-### 4. Получить список всех книг (GET /books/)
-
-```bash
-curl http://localhost:8000/books/
-```
-
-**Ответ (200 OK):**
-```json
-[
-  {
-    "id": 1,
-    "title": "Мастер и Маргарита",
-    "author": "М. Булгаков",
-    "published_year": 1967,
-    "isbn": "123-4567890123",
-    "copies": 5,
-    "description": "Классика"
-  }
-]
-```
-
----
-
-### 5. Выдача книги читателю (POST /loans/) — требуется авторизация
-
-```bash
-curl -X POST http://localhost:8000/loans/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <JWT_TOKEN>" \
-  -d '{"book_id": 1, "reader_id": 2}'
-```
-
-**Ответ (201 Created):**
-```json
-{
-  "id": 1,
-  "book_id": 1,
-  "reader_id": 2,
-  "loan_date": "2024-05-21T10:00:00",
-  "return_date": null
-}
-```
-
----
-
-### 6. Возврат книги (POST /loans/return) — требуется авторизация
-
-```bash
-curl -X POST http://localhost:8000/loans/return \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <JWT_TOKEN>" \
-  -d '{"book_id": 1, "reader_id": 2}'
-```
-
-**Ответ (200 OK):**
-```json
-{
-  "id": 1,
-  "book_id": 1,
-  "reader_id": 2,
-  "loan_date": "2024-05-21T10:00:00",
-  "return_date": "2024-05-22T13:45:00"
-}
-```
 
 ## ⚙️ Бизнес-логика
 
