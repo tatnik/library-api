@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.schemas.loan import LoanCreate, LoanRead
+from app.schemas.loan import LoanCreate, LoanRead, LoanReturn
 from app.schemas.book import BookRead
 from app.services.loan_service import LoanService
 from app.core.security import get_current_user
@@ -31,11 +31,11 @@ def create_loan(
 
 @router.post(
     "/return",
-    response_model=LoanRead,
+    response_model=LoanReturn,
     summary="Return a loaned book"
 )
 def return_loan(
-    loan_in: LoanCreate,
+    loan_in: LoanReturn,
     db: Session = Depends(get_db)
 ) -> LoanRead:
     """
@@ -45,14 +45,14 @@ def return_loan(
 
 @router.get(
     "/{reader_id}",
-    response_model=List[BookRead],
-    summary="List active loans for a reader"
+    response_model=List[LoanRead],
+    summary="Active loan list by reader"
 )
-def get_active_loans(
+def get_loans_by_reader(
     reader_id: int,
     db: Session = Depends(get_db)
-) -> List[BookRead]:
+) -> List[LoanRead]:
     """
     Get all currently loaned books for a reader.
     """
-    return LoanService.get_active_loans(db, reader_id)
+    return LoanService.get_loans_by_reader(db, reader_id)
