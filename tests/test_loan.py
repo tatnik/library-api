@@ -76,4 +76,19 @@ def test_return_not_loaned(client, setup_entities):
     resp = client.post(
         "/loans/return", json={"book_id": book_id, "reader_id": reader_id}, headers=auth_header
     )
-    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+def test_get_loans_by_reader(client, setup_entities):
+    book_id, reader_id, auth_header = setup_entities
+
+    # Loan a book
+    resp = client.post("/loans/", json={"book_id": book_id, "reader_id": reader_id}, headers=auth_header)
+    assert resp.status_code == 201
+
+    # Get active loans by reader
+    resp = client.get(f"/loans/{reader_id}", headers=auth_header)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, list)
+    assert data[0]["reader_id"] == reader_id
+    assert data[0]["return_date"] is None
