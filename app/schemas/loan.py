@@ -23,3 +23,8 @@ class LoanRead(LoanBase):
 
     class Config:
         orm_mode = True
+
+class LoanReturn(BaseModel):
+    book_id: int
+    reader_id: int
+    return_date: datetime
