@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.book import Book
 from app.schemas.book import BookCreate, BookUpdate, BookRead
+from app.utils import get_by_id_or_404
 
 class BookService:
     """
@@ -12,16 +13,6 @@ class BookService:
     @staticmethod
     def list_books(db: Session) -> List[BookRead]:
         return db.query(Book).all()
-
-    @staticmethod
-    def get_book_or_404(db: Session, book_id: int) -> BookRead:
-        book = db.get(Book, book_id)
-        if not book:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Book not found"
-            )
-        return book
 
     @staticmethod
     def create_book(db: Session, book_in: BookCreate) -> BookRead:
@@ -33,7 +24,7 @@ class BookService:
 
     @staticmethod
     def update_book(db: Session, book_id: int, book_in: BookUpdate) -> BookRead:
-        book = BookService.get_book_or_404(db, book_id)
+        book = get_by_id_or_404(db, Book, book_id)
         for field, value in book_in.dict(exclude_unset=True).items():
             setattr(book, field, value)
         db.commit()
@@ -42,6 +33,6 @@ class BookService:
 
     @staticmethod
     def delete_book(db: Session, book_id: int) -> None:
-        book = BookService.get_book_or_404(db, book_id)
+        book = get_by_id_or_404(db, Book, book_id)
         db.delete(book)
         db.commit()

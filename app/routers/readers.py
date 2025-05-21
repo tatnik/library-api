@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from app.schemas.reader import ReaderCreate, ReaderRead, ReaderUpdate
 from app.services.reader_service import ReaderService
 from app.core.security import get_current_user
+from app.utils import get_by_id_or_404
+from app.models.reader import Reader
 from app.db import get_db
 
 router = APIRouter(
@@ -53,7 +55,7 @@ def read_reader(
     """
     Get a single reader by ID.
     """
-    return ReaderService.get_reader_or_404(db, reader_id)
+    return get_by_id_or_404(db, Reader, reader_id)
 
 @router.put(
     "/{reader_id}",

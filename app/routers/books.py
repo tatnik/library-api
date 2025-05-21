@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from app.schemas.book import BookCreate, BookRead, BookUpdate
 from app.services.book_service import BookService
 from app.core.security import get_current_user
+from app.utils import get_by_id_or_404
+from app.models.book import Book
 from app.db import get_db
 
 router = APIRouter(
@@ -37,7 +39,7 @@ def read_book(
     """
     Get a single book by its ID.
     """
-    return BookService.get_book_or_404(db, book_id)
+    return get_by_id_or_404(db, Book, book_id)
 
 @router.post(
     "/",

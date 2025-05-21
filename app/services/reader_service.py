@@ -4,21 +4,12 @@ from sqlalchemy.orm import Session
 
 from app.models.reader import Reader
 from app.schemas.reader import ReaderCreate, ReaderUpdate
-
+from app.utils import get_by_id_or_404
 
 class ReaderService:
     """
     Business logic for managing readers.
     """
-    @staticmethod
-    def get_reader_or_404(db: Session, reader_id: int) -> Reader:
-        reader = db.get(Reader, reader_id)
-        if not reader:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Reader not found"
-            )
-        return reader
 
     @staticmethod
     def create_reader(db: Session, reader_in: ReaderCreate) -> Reader:
@@ -39,7 +30,7 @@ class ReaderService:
 
     @staticmethod
     def update_reader(db: Session, reader_id: int, reader_in: ReaderUpdate) -> Reader:
-        reader = ReaderService.get_reader_or_404(db, reader_id)
+        reader = get_by_id_or_404(db, Reader, reader_id)
         for field, value in reader_in.dict(exclude_unset=True).items():
             setattr(reader, field, value)
         db.commit()
@@ -48,6 +39,6 @@ class ReaderService:
 
     @staticmethod
     def delete_reader(db: Session, reader_id: int) -> None:
-        reader = ReaderService.get_reader_or_404(db, reader_id)
+        reader = get_by_id_or_404(db, Reader, reader_id)
         db.delete(reader)
         db.commit()
