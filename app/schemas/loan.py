@@ -27,4 +27,6 @@ class LoanRead(LoanBase):
 class LoanReturn(BaseModel):
     book_id: int
     reader_id: int
-    return_date: datetime
+    return_date: Optional[datetime] = None
+    class Config:
+        orm_mode = True

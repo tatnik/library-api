@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+from typing import Optional
+from datetime import datetime
 
 from app.models.book import Book
 from app.models.reader import Reader
@@ -23,7 +25,6 @@ class LoanService:
                 status.HTTP_400_BAD_REQUEST,
                 detail="No copies available for this book"
             )
-        # Raise HTTPException if reader does not exist
         get_by_id_or_404(db, Reader, loan_in.reader_id)
 
         # Check the reader's current active loans (not returned)
@@ -58,11 +59,11 @@ class LoanService:
             Loan.book_id == loan_in.book_id,
             Loan.reader_id == loan_in.reader_id,
             Loan.return_date.is_(None),
-            detail="No active loan found"
+            detail=f"No loans of book with id={loan_in.book_id} by reader {loan_in.reader_id}"
         )
         book = get_by_id_or_404(db, Book, loan.book_id)
         book.copies += 1
-        loan.return_date = loan_in.return_date
+        loan.return_date = loan_in.return_date or datetime.utcnow()
         db.commit()
         db.refresh(loan)
         return loan
@@ -73,7 +74,7 @@ class LoanService:
         Get all current (not returned) loans for a reader.
         """
         # Raise HTTPException if reader does not exist
-        get_by_id_or_404(db, Reader, reader_id)
+        get_by_id_or_404(db, Loan, reader_id, detail=f"No loans by reader {reader_id}")
         return db.query(Loan).filter(
             Loan.reader_id == reader_id,
             Loan.return_date.is_(None)
