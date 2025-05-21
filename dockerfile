@@ -11,9 +11,14 @@ RUN apt-get update \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3) Копируем весь проект (включая entrypoint.sh) и делаем скрипт исполняемым
+# 3) Копируем весь проект 
 COPY . .
-RUN chmod +x ./entrypoint.sh
 
-# 4) Запуск через entrypoint.sh
-ENTRYPOINT ["./entrypoint.sh"]
+# 4) Копируем etrypoint.sh (без этой команды Ubunta его не находит)
+COPY entrypoint.sh /entrypoint.sh
+
+# 5) Делаем скрипт исполняемым
+RUN chmod +x /entrypoint.sh
+
+# 6) Запускаемся через entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
